@@ -1,5 +1,4 @@
 use regex::Regex;
-use std::fmt::Display;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -7,13 +6,29 @@ use std::path::Path;
 fn main() {
     let wordlist = get_wordlist();
 
-    println!("{:?}", dbg!(get_rime(&"gigu", &wordlist, 2)).get(0))
+    dbg!(get_all_rimes(&"gigu", &wordlist));
 }
 
-fn get_rime(word: &str, wordlist: &Vec<String>, depth: usize) -> Vec<String> {
+fn get_all_rimes(word: &str, wordlist: &Vec<String>) -> Vec<Vec<String>> {
+    let mut rimes: Vec<Vec<String>> = vec![];
+
+    for depth in (1..dbg!(word.len())).rev() {
+        rimes.push(get_rime_for_depth(word, wordlist, depth));
+    }
+    for level in 1..rimes.len() {
+        let next_rimes = rimes[level - 1].clone();
+        for i in (level)..rimes.len() {
+            rimes[i].retain(|word| !next_rimes.contains(word));
+        }
+    }
+
+    rimes
+}
+
+fn get_rime_for_depth(word: &str, wordlist: &Vec<String>, depth: usize) -> Vec<String> {
     let mut rimes: Vec<String> = wordlist.clone();
-    let re = Regex::new(r"\w*oss\b").unwrap();
-    rimes.retain(|s| dbg!(re.is_match(dbg!(s))));
+    let re = Regex::new(&(r"\w*".to_owned() + &word[word.len() - depth..] + &r"\b")).unwrap();
+    rimes.retain(|s| re.is_match(s));
     rimes
 }
 
