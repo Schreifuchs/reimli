@@ -10,13 +10,14 @@ with open("../berndeutsch.csv", 'wb') as file:
 
         soup = BeautifulSoup(page.content, "html.parser")
 
-        h3s = soup.findAll("h3")
+        last = ""
 
-        for h3_tag in h3s:
-            a_tags = h3_tag.find_all('a')
-
-            # loop through each a tag and do something with it
-            for a_tag in a_tags:
-                word = re.split(r'[ ,;!?]+', a_tag.text)[0]                # do something with the a tag
-                print(word)
-                file.write((word + "\n").encode("UTF-8"))
+        for h3_tag in soup.findAll("h3"):
+            for a_tag in h3_tag.find_all('a'):
+                word = re.split(r'[ \/,;!?]+', a_tag.text)[0]
+                if word != last:
+                    print(word)
+                    file.write((word + "\n").encode("UTF-8"))
+                    last = word
+                else:
+                    print("** "+word+" **")
