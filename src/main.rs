@@ -17,9 +17,9 @@ fn main() {
 fn print_rimes(rimes: &Vec<Vec<String>>) {
     for line in rimes {
         for word in line {
-            print!(" -  {}  - ", word);
+            print!("{},", word);
         }
-        print!("\n");
+        print!("\n-----------------------------------------\n");
     }
 }
 
