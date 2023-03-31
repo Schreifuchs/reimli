@@ -11,7 +11,15 @@ fn main() {
 
         io::stdin().read_line(&mut word).expect("Fehler beim lesen der Zeile");
 
-        dbg!(get_all_rimes(dbg!(&word.trim()), &wordlist));
+        print_rimes(&get_all_rimes(dbg!(&word.trim()), &wordlist));
+    }
+}
+fn print_rimes(rimes: &Vec<Vec<String>>) {
+    for line in rimes {
+        for word in line {
+            print!(" -  {}  - ", word);
+        }
+        print!("\n");
     }
 }
 
