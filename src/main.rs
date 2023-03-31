@@ -6,7 +6,13 @@ use std::path::Path;
 fn main() {
     let wordlist = get_wordlist();
 
-    dbg!(get_all_rimes(&"gigu", &wordlist));
+    while true {
+        let mut word = String::new();
+
+        io::stdin().read_line(&mut word).expect("Fehler beim lesen der Zeile");
+
+        dbg!(get_all_rimes(dbg!(&word.trim()), &wordlist));
+    }
 }
 
 fn get_all_rimes(word: &str, wordlist: &Vec<String>) -> Vec<Vec<String>> {
