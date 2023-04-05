@@ -9,7 +9,9 @@ fn main() {
     while true {
         let mut word = String::new();
 
-        io::stdin().read_line(&mut word).expect("Fehler beim lesen der Zeile");
+        io::stdin()
+            .read_line(&mut word)
+            .expect("Fehler beim lesen der Zeile");
 
         print_rimes(&get_all_rimes(dbg!(&word.trim()), &wordlist));
     }
@@ -26,9 +28,11 @@ fn print_rimes(rimes: &Vec<Vec<String>>) {
 fn get_all_rimes(word: &str, wordlist: &Vec<String>) -> Vec<Vec<String>> {
     let mut rimes: Vec<Vec<String>> = vec![];
 
-    for depth in (1..dbg!(word.len())).rev() {
+    for depth in (1..dbg!(dbg!(word).len())).rev() {
         rimes.push(get_rime_for_depth(word, wordlist, depth));
     }
+
+    //Delete duplicates
     for level in 1..rimes.len() {
         let next_rimes = rimes[level - 1].clone();
         for i in (level)..rimes.len() {
@@ -41,9 +45,26 @@ fn get_all_rimes(word: &str, wordlist: &Vec<String>) -> Vec<Vec<String>> {
 
 fn get_rime_for_depth(word: &str, wordlist: &Vec<String>, depth: usize) -> Vec<String> {
     let mut rimes: Vec<String> = wordlist.clone();
-    let re = Regex::new(&(r"\w*".to_owned() + &word[word.len() - depth..] + &r"\b")).unwrap();
-    rimes.retain(|s| re.is_match(s));
+    //let re = Regex::new(&(r"\w*".to_owned() + &word[word.len() - depth..] + &r"\b")).unwrap();
+    rimes.retain(|s| check_for_depth(s, word, depth));
     rimes
+}
+
+fn check_for_depth(word: &str, word_two: &str, depth: usize) -> bool {
+    let chars: Vec<char> = word.chars().collect();
+    let chars_two: Vec<char> = word_two.chars().collect();
+
+    if chars.len() < depth || chars_two.len() < depth {
+        return false;
+    }
+    for i in (chars.len() - depth)..chars.len() {
+        for j in (chars_two.len() - depth)..chars_two.len() {
+            if chars.get(i) != chars_two.get(j) {
+                return false;
+            }
+        }
+    }
+    true
 }
 
 fn get_wordlist() -> Vec<String> {
