@@ -2,14 +2,17 @@ use regex::Regex;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
+use unicode_segmentation::UnicodeSegmentation;
 
 fn main() {
     let wordlist = get_wordlist();
 
-    while true {
+    loop {
         let mut word = String::new();
 
-        io::stdin().read_line(&mut word).expect("Fehler beim lesen der Zeile");
+        io::stdin()
+            .read_line(&mut word)
+            .expect("Fehler beim lesen der Zeile");
 
         print_rimes(&get_all_rimes(dbg!(&word.trim()), &wordlist));
     }
@@ -41,7 +44,20 @@ fn get_all_rimes(word: &str, wordlist: &Vec<String>) -> Vec<Vec<String>> {
 
 fn get_rime_for_depth(word: &str, wordlist: &Vec<String>, depth: usize) -> Vec<String> {
     let mut rimes: Vec<String> = wordlist.clone();
-    let re = Regex::new(&(r"\w*".to_owned() + &word[word.len() - depth..] + &r"\b")).unwrap();
+    let word = word.graphemes(true).collect::<Vec<&str>>();
+
+    let mut matcher = String::new();
+
+    for i in word.len() - depth..word.len() {
+        match word.get(i) {
+            None => print!("upsi"),
+            Some(char) => {
+                matcher = matcher + char;
+            }
+        }
+    }
+
+    let re = Regex::new(&(r"\w*".to_owned() + &matcher + &r"\b")).unwrap();
     rimes.retain(|s| re.is_match(s));
     rimes
 }

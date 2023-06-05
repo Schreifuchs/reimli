@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 prettytable-rs = "0.10.0"
 regex = "1.7.3"
+unicode-segmentation = "1.10.1"
